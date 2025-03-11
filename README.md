@@ -48,7 +48,7 @@ PORT      STATE SERVICE
 *****/tcp open  unknown
 *****/tcp open  unknown
 *****/tcp open  unknown
-*****/tcp open  unknown
+*****/tcp open  unknown`
 
 Nmap 7.95 scan initiated Tue Mar 11 14:15:30 2025 as: nmap -p- --min-rate=1000 -T4 -oG open_ports.txt 192.168.x.x
 Host: 192.168.x.x ()    Status: Up
