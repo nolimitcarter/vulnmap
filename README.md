@@ -55,21 +55,21 @@ Host: 192.168.x.x ()    Status: Up
 Host: 192.168.x.x ()    Ports: 21/open/tcp//ftp///, 22/open/tcp//ssh///, *****/open/tcp//sip///, *****/open/tcp//*********///, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////        Ignored State: closed (65520)
 
 ssh2-enum-algos:
-  ********************
+********************
 key_algorithms: 
-  ********************
+********************
 server_host_key_algorithms:
-  ********************
+********************
 encryption algorithms: 
-  ********************
+********************
 mac_algorithms:
-  ********************
+********************
 compression algorithms:
-  ********************
+********************
 ssh-auth-methods:
-  ********************
+********************
 ssh-hostkey:
-  ***********************************
+***********************************
 
 SERVICE_FINGERPRINTS
 SERVICE INFO: OS: XXXXXX; Device: XXXXXXX; CPE: XXXXXXX
