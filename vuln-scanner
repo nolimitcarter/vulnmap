@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Ensure a target is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <target-ip>"
+    exit 1
+fi
+
+TARGET=$1
+
+# Perform initial scan to detect open ports
+echo "[*] Scanning for open ports..."
+nmap -p- --min-rate=1000 -T4 $TARGET -oG open_ports.txt
+
+# Extract open ports from scan results
+open_ports=$(grep -oP '(\d+)/open/tcp' open_ports.txt | cut -d '/' -f 1 | tr '\n' ',' | sed 's/,$//')
+
+# Exit if no open ports found
+if [ -z "$open_ports" ]; then
+    echo "No open ports found. Exiting..."
+    exit 1
+fi
+
+echo "[*] Open ports detected: $open_ports"
+
+# Perform Nmap vulnerability scan with service detection
+echo "[*] Running vulnerability scan..."
+nmap -sV --script=vuln,vulners,ssh-auth-methods -p$open_ports $TARGET -oN nmap_vuln_results.txt
+
+# Extract service versions from nmap_vuln_results.txt
+echo "[*] Extracting service versions from scan results..."
+services=$(grep -E "^[0-9]+/tcp" nmap_vuln_results.txt | awk '{print $1, $3, $4}')
+
+# Display extracted services
+echo "[*] Detected services and versions:"
+echo "$services"
+
+# Default credentials check
+echo "[*] Checking default credentials..."
+[[ "$open_ports" == *"22"* ]] && sshpass -p "toor" ssh -o StrictHostKeyChecking=no root@$TARGET "echo 'SSH default credentials found!'" 2>/dev/null
+[[ "$open_ports" == *"21"* ]] && (echo -e "USER anonymous\r\nPASS anonymous@\r\n" | nc -w 3 $TARGET 21 | grep -q "230" && echo "Anonymous FTP login allowed.")
+[[ "$open_ports" == *"3306"* ]] && mysql -h $TARGET -u root -p'root' -e "SHOW DATABASES;" 2>/dev/null && echo "MySQL default credentials found."
+
+# Query CVE database for detected services
+echo "[*] Checking for known vulnerabilities..."
+echo "$services" | while read -r line; do
+    port=$(echo "$line" | awk '{print $1}' | cut -d '/' -f1)
+    software=$(echo "$line" | awk '{print $2}')
+    version=$(echo "$line" | awk '{print $3}')
+
+    if [ -n "$software" ] && [ -n "$version" ]; then
+        echo "Checking CVEs for $software $version on port $port..."
+        cve_results=$(curl -s "https://services.nvd.nist.gov/rest/json/cves/2.0?keywordSearch=$software%20$version")
+
+        if echo "$cve_results" | jq empty 2>/dev/null; then
+            count=$(echo "$cve_results" | jq '.vulnerabilities | length')
+            if [ "$count" -gt 0 ]; then
+                echo "Vulnerabilities found for $software $version:"
+                echo "$cve_results" | jq -r '.vulnerabilities[] | "CVE: \(.cve.id) - \(.cve.descriptions[0].value)"'
+            else
+                echo "No CVEs found."
+            fi
+        else
+            echo "Error: API returned invalid data."
+        fi
+    fi
+done
+
+echo "[*] Scan completed. Check nmap_vuln_results.txt for details."
+

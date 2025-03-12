@@ -56,7 +56,6 @@ Nmap 7.95 scan initiated Tue Mar 11 14:15:30 2025 as: nmap -p- --min-rate=1000 -
 Host: 192.168.x.x ()    Status: Up
 Host: 192.168.x.x ()    Ports: 21/open/tcp//ftp///, 22/open/tcp//ssh///, *****/open/tcp//sip///, *****/open/tcp//*********///, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////, *****/open/tcp/////        Ignored State: closed (65520)
 
-[*] Debug: Extracted open ports: 21,22,****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****
 [*] Open ports found: 21,22,****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****,*****
 
 ssh2-enum-algos:
@@ -91,4 +90,5 @@ Searching CVEs for ftp ******** on port open...
 CVE: CVE-XXXX-XXXXX
 CVE: CVE-XXXX-XXXXX
 CVE: CVE-XXXX-XXXXX
+[*] Scan completed. Check nmap_vuln_results.txt for details.
 ```
